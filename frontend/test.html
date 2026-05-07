@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Checkout Test Page</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      max-width: 600px;
+      margin: 60px auto;
+      padding: 0 20px;
+      color: #1a202c;
+    }
+    h2 { color: #2d3748; }
+    .product {
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 20px;
+      margin: 20px 0;
+    }
+    .row {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid #f7fafc;
+    }
+    .shipping-cost { cursor: pointer; color: #4a5568; }
+    .total-price { font-weight: bold; font-size: 18px; }
+    .coupon-field {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+    .payment-section {
+      margin-top: 30px;
+      padding: 20px;
+      background: #f7fafc;
+      border-radius: 8px;
+    }
+    .btn {
+      width: 100%;
+      padding: 14px;
+      background: #48bb78;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 16px;
+    }
+    .btn:hover { background: #38a169; }
+    .signal-log {
+      margin-top: 30px;
+      padding: 16px;
+      background: #1a202c;
+      color: #68d391;
+      border-radius: 8px;
+      font-family: monospace;
+      font-size: 12px;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>🛒 Checkout</h2>
+
+  <div class="product">
+    <div class="row">
+      <span>Running Shoes (x1)</span>
+      <span id="price" data-price>₹2,499</span>
+    </div>
+    <div class="row">
+      <span class="shipping-cost" id="shipping" data-shipping>
+        🚚 Shipping cost (hover me)
+      </span>
+      <span class="shipping-cost" data-shipping>₹199</span>
+    </div>
+    <div class="row">
+      <span><strong>Total</strong></span>
+      <span class="total-price" id="total" data-total>₹2,698</span>
+    </div>
+  </div>
+
+  <input
+    class="coupon-field"
+    id="coupon"
+    data-coupon
+    placeholder="Enter coupon code (click to trigger price hesitation)"
+  />
+
+  <div class="payment-section" id="payment" data-payment>
+    <h3 style="margin:0 0 12px">Payment Details</h3>
+    <p style="margin:0; color:#718096; font-size:14px;">
+      Card number, UPI, or wallet
+    </p>
+    <button class="btn">Place Order →</button>
+  </div>
+
+  <div class="signal-log" id="log">
+    // Signal log — watch what the observer detects...<br>
+  </div>
+
+  <script>
+    // Override console.warn to show in log
+    const log = document.getElementById("log");
+    const origWarn = console.warn;
+    console.warn = (...args) => {
+      log.innerHTML += args.join(" ") + "<br>";
+      log.scrollTop = log.scrollHeight;
+      origWarn(...args);
+    };
+
+    // Log signals being sent
+    const origFetch = window.fetch;
+    window.fetch = async (...args) => {
+      if (args[0].includes("analyze")) {
+        const body = JSON.parse(args[1].body);
+        log.innerHTML += `→ Sending signals: time=${body.signals.time_on_page_seconds}s, hovered=${JSON.stringify(body.signals.hovered_on)}<br>`;
+        log.scrollTop = log.scrollHeight;
+      }
+      return origFetch(...args);
+    };
+  </script>
+
+  <!-- Load the widget -->
+  <script src="widget.js"></script>
+
+</body>
+</html>
