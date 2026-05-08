@@ -110,7 +110,10 @@
 
       const result = await response.json();
 
-      if (result.should_intervene && result.confidence >= CONFIDENCE_THRESHOLD) {
+      if (
+  result.confidence >= CONFIDENCE_THRESHOLD &&
+  result.intervention
+) {
         showWidget(result.intervention, result.friction_type);
       }
 
