@@ -1,6 +1,6 @@
 (function () {
   // ─── CONFIG ───────────────────────────────────────────────
-  const BACKEND_URL = "http://127.0.0.1:8000/analyze";
+  const BACKEND_URL = "https://checkout-recovery.onrender.com/analyze";
   const TRIGGER_AFTER_SECONDS = 45;
   const CONFIDENCE_THRESHOLD = 0.6;
 
