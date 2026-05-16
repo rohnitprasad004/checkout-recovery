@@ -1,6 +1,6 @@
 (function () {
   // ─── CONFIG ───────────────────────────────────────────────
-  const BACKEND_URL = "https://checkout-recovery.onrender.com/analyze";
+  const BACKEND_URL = "http://127.0.0.1:8000/analyze";
   const TRIGGER_AFTER_SECONDS = 45;
   const CONFIDENCE_THRESHOLD = 0.6;
 
@@ -74,6 +74,19 @@
     if (!widgetShown) analyzeAndIntervene();
   });
 
+  // For demo: hovering payment section twice triggers trust gap analysis
+let paymentHovers = 0;
+document.querySelectorAll("[data-payment]").forEach(el => {
+    el.addEventListener("mouseenter", () => {
+        paymentHovers++;
+        if (paymentHovers >= 2 && !widgetShown) {
+            paymentReached = true;
+            backButtonClicked = true;
+            analyzeAndIntervene();
+        }
+    });
+});
+
   // ─── OBSERVE: payment section reached ─────────────────────
   const paymentObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
@@ -90,6 +103,7 @@
   async function analyzeAndIntervene() {
     if (widgetShown) return;
 
+    if (window._itemsRemoved) itemsRemoved = true;
     const signals = {
       time_on_page_seconds: timeOnPage,
       hovered_on: hoveredElements,
@@ -196,12 +210,14 @@
 
     document.getElementById("crw-close").addEventListener("click", () => {
       widget.remove();
+widgetShown = false;
     });
 
     // Auto-dismiss after 10 seconds
     setTimeout(() => {
       if (document.getElementById("checkout-recovery-widget")) {
         widget.remove();
+widgetShown = false;
       }
     }, 10000);
   }

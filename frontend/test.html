@@ -11,34 +11,73 @@
       padding: 0 20px;
       color: #1a202c;
     }
-    h2 { color: #2d3748; }
+    h2 { color: #2d3748; margin-bottom: 8px; }
+    .hint { font-size: 13px; color: #718096; margin-bottom: 24px; }
+    .hint span { background: #ebf8ff; color: #2b6cb0; padding: 2px 8px; border-radius: 4px; margin-right: 6px; font-weight: 500; }
     .product {
       border: 1px solid #e2e8f0;
       border-radius: 8px;
       padding: 20px;
-      margin: 20px 0;
+      margin: 16px 0;
     }
     .row {
       display: flex;
       justify-content: space-between;
-      padding: 8px 0;
+      align-items: center;
+      padding: 10px 0;
       border-bottom: 1px solid #f7fafc;
     }
-    .shipping-cost { cursor: pointer; color: #4a5568; }
-    .total-price { font-weight: bold; font-size: 18px; }
-    .coupon-field {
-      width: 100%;
-      padding: 10px;
-      margin: 10px 0;
-      border: 1px solid #e2e8f0;
-      border-radius: 6px;
-      font-size: 14px;
+    .row:last-child { border-bottom: none; }
+    .hoverable {
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 4px;
+      transition: background 0.2s;
     }
+    .hoverable:hover { background: #ebf8ff; color: #2b6cb0; }
+    .total-price { font-weight: bold; font-size: 18px; }
+    .size-row {
+      display: flex;
+      gap: 8px;
+      padding: 10px 0;
+      border-bottom: 1px solid #f7fafc;
+      align-items: center;
+    }
+    .size-btn {
+      padding: 6px 14px;
+      border: 1px solid #cbd5e0;
+      border-radius: 6px;
+      cursor: pointer;
+      background: #fff;
+      font-size: 13px;
+      transition: all 0.2s;
+    }
+    .size-btn:hover { border-color: #4299e1; background: #ebf8ff; color: #2b6cb0; }
+    .size-chart-link {
+      font-size: 13px;
+      color: #4299e1;
+      text-decoration: underline;
+      cursor: pointer;
+      margin-left: 8px;
+    }
+    .security-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      color: #718096;
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 4px;
+      transition: background 0.2s;
+    }
+    .security-badge:hover { background: #fff5f5; color: #c53030; }
     .payment-section {
-      margin-top: 30px;
+      margin-top: 16px;
       padding: 20px;
       background: #f7fafc;
       border-radius: 8px;
+      border: 1px solid #e2e8f0;
     }
     .btn {
       width: 100%;
@@ -54,81 +93,115 @@
     }
     .btn:hover { background: #38a169; }
     .signal-log {
-      margin-top: 30px;
-      padding: 16px;
+      margin-top: 24px;
+      padding: 14px;
       background: #1a202c;
       color: #68d391;
       border-radius: 8px;
       font-family: monospace;
       font-size: 12px;
-      max-height: 200px;
+      max-height: 160px;
       overflow-y: auto;
+      line-height: 1.6;
     }
   </style>
 </head>
 <body>
 
   <h2>🛒 Checkout</h2>
-
-  <div class="product">
-    <div class="row">
-      <span>Running Shoes (x1)</span>
-      <span id="price" data-price>₹2,499</span>
-    </div>
-    <div class="row">
-      <span class="shipping-cost" id="shipping" data-shipping>
-        🚚 Shipping cost (hover me)
-      </span>
-      <span class="shipping-cost" data-shipping>₹199</span>
-    </div>
-    <div class="row">
-      <span><strong>Total</strong></span>
-      <span class="total-price" id="total" data-total>₹2,698</span>
-    </div>
+  <div class="hint">
+    Hover triggers: 
+    <span>📦 Shipping x2</span>
+    <span>💰 Total/Price x2</span>
+    <span>👕 Size chart x1</span>
+    <span>🔒 Security badge x1</span>
   </div>
 
-  <input
-    class="coupon-field"
-    id="coupon"
-    data-coupon
-    placeholder="Enter coupon code (click to trigger price hesitation)"
-  />
+  <div class="product">
 
+    <!-- Product with size variants -->
+    <div class="size-row">
+      <span style="font-weight:600;">The Multi-location Snowboard</span>
+      <div>
+        <button class="size-btn" data-size data-variant>S</button>
+        <button class="size-btn" data-size data-variant>M</button>
+        <button class="size-btn" data-size data-variant>L</button>
+        <span class="size-chart-link" data-size data-variant>Size chart ↗</span>
+      </div>
+    </div>
+
+    <!-- Price -->
+    <div class="row">
+      <span>Price</span>
+      <span class="hoverable" id="price" data-price>$729.95</span>
+    </div>
+
+    <!-- Shipping — hover twice to trigger -->
+    <div class="row">
+      <span class="hoverable" id="shipping" data-shipping>
+        🚚 Shipping &amp; delivery
+      </span>
+      <span class="hoverable" data-shipping>$19.95</span>
+    </div>
+
+    <!-- Total — hover twice to trigger price hesitation -->
+    <div class="row">
+      <span><strong>Total</strong></span>
+      <span class="hoverable total-price" id="total" data-total>$749.90</span>
+    </div>
+
+  </div>
+
+  <!-- Payment section with security badge — hover to trigger trust gap -->
   <div class="payment-section" id="payment" data-payment>
-    <h3 style="margin:0 0 12px">Payment Details</h3>
-    <p style="margin:0; color:#718096; font-size:14px;">
-      Card number, UPI, or wallet
-    </p>
+    <div style="display:flex;justify-content:space-between;align-items:center;">
+      <h3 style="margin:0;">Payment Details</h3>
+      <span class="security-badge" data-payment>
+        🔒 Hover for trust gap
+      </span>
+    </div>
+    <p style="color:#718096;font-size:14px;margin-top:8px;">Credit card · UPI · Wallet</p>
     <button class="btn">Place Order →</button>
   </div>
 
-  <div class="signal-log" id="log">
-    // Signal log — watch what the observer detects...<br>
-  </div>
+  <div class="signal-log" id="log">// Watching buyer signals...<br></div>
 
   <script>
-    // Override console.warn to show in log
     const log = document.getElementById("log");
+
+    // Log outgoing fetch calls
+    const origFetch = window.fetch;
+    window.fetch = async (...args) => {
+      if (args[0] && args[0].toString().includes("analyze")) {
+        try {
+          const body = JSON.parse(args[1].body);
+          log.innerHTML += "→ Sending: time=" + body.signals.time_on_page_seconds +
+            "s hovered=" + JSON.stringify(body.signals.hovered_on) + "<br>";
+          log.scrollTop = log.scrollHeight;
+        } catch(e) {}
+      }
+      return origFetch(...args);
+    };
+
+    // Override console.warn to show backend errors in log
     const origWarn = console.warn;
     console.warn = (...args) => {
-      log.innerHTML += args.join(" ") + "<br>";
+      log.innerHTML += "⚠ " + args.join(" ") + "<br>";
       log.scrollTop = log.scrollHeight;
       origWarn(...args);
     };
 
-    // Log signals being sent
-    const origFetch = window.fetch;
-    window.fetch = async (...args) => {
-      if (args[0].includes("analyze")) {
-        const body = JSON.parse(args[1].body);
-        log.innerHTML += `→ Sending signals: time=${body.signals.time_on_page_seconds}s, hovered=${JSON.stringify(body.signals.hovered_on)}<br>`;
+    // Trust gap: hovering security badge twice triggers it
+    let securityHovers = 0;
+    document.querySelectorAll("[data-payment]").forEach(el => {
+      el.addEventListener("mouseenter", () => {
+        securityHovers++;
+        log.innerHTML += "→ Security/payment hovered (" + securityHovers + "x)<br>";
         log.scrollTop = log.scrollHeight;
-      }
-      return origFetch(...args);
-    };
+      });
+    });
   </script>
 
-  <!-- Load the widget -->
   <script src="widget.js"></script>
 
 </body>
